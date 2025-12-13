@@ -1,19 +1,18 @@
 # Chrome
 
-Contenedor Docker con Google Chrome basado en LinuxServer. Proporciona una interfaz web y acceso VNC para usar Chrome en un navegador headless.
+Contenedor Docker con Google Chrome basado en LinuxServer. Proporciona una interfaz web para usar Chrome en un navegador headless.
 
 ## Características
 
 - 🌐 **Interfaz Web**: Acceso a Chrome vía navegador en puerto 3000
-- 🖥️ **VNC**: Acceso remoto vía VNC en puerto 3001
 - 🔒 **Aislado**: Chrome ejecutándose en contenedor seguro
-- ⚙️ **Configurable**: Variables de entorno para PUID/PGID/TZ
+- ⚙️ **Configurable**: Variables de entorno para TZ y dominio
 
 ## Requisitos Previos
 
 - Docker Engine instalado
 - Portainer configurado (recomendado)
-- **Para Traefik o NPM**: Red Docker `proxy` creada
+- **Para Traefik**: Red Docker `proxy` creada
 - **Dominio configurado**: Para acceso HTTPS
 
 ## Variables de Entorno
@@ -21,9 +20,8 @@ Contenedor Docker con Google Chrome basado en LinuxServer. Proporciona una inter
 Configura estas variables en un archivo `.env`:
 
 ```env
-PUID=1000          # ID del usuario
-PGID=1000          # ID del grupo
-TZ=Europe/Madrid   # Zona horaria
+TZ=Europe/Madrid       # Zona horaria
+DOMAIN_HOST=tudominio.com  # Dominio para Traefik
 ```
 
 ## Despliegue con Portainer
@@ -49,25 +47,17 @@ TZ=Europe/Madrid   # Zona horaria
 ### Traefik
 
 1. Copia `docker-compose.override.traefik.yml.example` a `docker-compose.override.yml`
-2. Edita los dominios:
-   - `chrome.tudominio.com` para la interfaz web
-   - `chrome-vnc.tudominio.com` para VNC
+2. Edita `DOMAIN_HOST` en tu `.env` con tu dominio real
 3. Asegúrate de que la red `proxy` existe
 4. Deploy
 
 ### NPM (Nginx Proxy Manager)
 
-1. Copia `docker-compose.override.npm.yml.example` a `docker-compose.override.yml`
-2. En NPM, crea Proxy Hosts:
-   - **Web UI**: `chrome.tudominio.com` → `chrome:3000`
-   - **VNC**: `chrome-vnc.tudominio.com` → `chrome:3001`
-3. Asegúrate de que la red `npm` existe
-4. Deploy
+No soportado actualmente (falta override).
 
 ## Acceso
 
-- **Interfaz Web**: `http://localhost:3000` o `https://chrome.tudominio.com`
-- **VNC**: `localhost:3001` con cliente VNC (usuario: abc, password: abc)
+- **Interfaz Web**: `https://${DOMAIN_HOST}` (configurado en Traefik)
 
 ## Volúmenes
 
