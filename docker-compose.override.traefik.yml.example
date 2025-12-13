@@ -1,28 +1,18 @@
-version: '3.8'
-
 services:
   chrome:
-    environment:
-      - PUID=${PUID:-1000}
-      - PGID=${PGID:-1000}
-      - TZ=${TZ:-Europe/Madrid}
-    volumes:
-      - chrome_config:/config
+    ports: []
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.chrome.rule=Host(`chrome.tudominio.com`)"
+      - "traefik.http.routers.chrome.rule=Host(`chrome.${DOMAIN_HOST}`)"
       - "traefik.http.routers.chrome.entrypoints=websecure"
       - "traefik.http.routers.chrome.tls.certresolver=letsencrypt"
       - "traefik.http.services.chrome.loadbalancer.server.port=3000"
-      - "traefik.http.routers.chrome-vnc.rule=Host(`chrome-vnc.tudominio.com`)"
+      - "traefik.http.routers.chrome-vnc.rule=Host(`chrome-vnc.${DOMAIN_HOST}`)"
       - "traefik.http.routers.chrome-vnc.entrypoints=websecure"
       - "traefik.http.routers.chrome-vnc.tls.certresolver=letsencrypt"
       - "traefik.http.services.chrome-vnc.loadbalancer.server.port=3001"
     networks:
       - proxy
-
-volumes:
-  chrome_config:
 
 networks:
   proxy:
