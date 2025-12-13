@@ -1,19 +1,8 @@
 services:
   chrome:
-    ports: []
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.chrome.rule=Host(`chrome.${DOMAIN_HOST}`)"
+      - "traefik.http.routers.chrome.rule=Host(`${DOMAIN_HOST}`)"
       - "traefik.http.routers.chrome.entrypoints=websecure"
       - "traefik.http.routers.chrome.tls.certresolver=letsencrypt"
       - "traefik.http.services.chrome.loadbalancer.server.port=3000"
-      - "traefik.http.routers.chrome-vnc.rule=Host(`chrome-vnc.${DOMAIN_HOST}`)"
-      - "traefik.http.routers.chrome-vnc.entrypoints=websecure"
-      - "traefik.http.routers.chrome-vnc.tls.certresolver=letsencrypt"
-      - "traefik.http.services.chrome-vnc.loadbalancer.server.port=3001"
-    networks:
-      - proxy
-
-networks:
-  proxy:
-    external: true
