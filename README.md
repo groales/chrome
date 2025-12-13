@@ -53,7 +53,7 @@ DOMAIN_HOST=tudominio.com  # Dominio para Traefik
 
 ### NPM (Nginx Proxy Manager)
 
-No soportado actualmente (falta override).
+No requiere override adicional. Solo configura un Proxy Host en NPM apuntando a `chrome:3000` en la red `proxy`.
 
 ## Acceso
 
