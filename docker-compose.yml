@@ -6,14 +6,18 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=${TZ:-Europe/Madrid}
+      - LC_ALL=${LC_ALL:-es_ES.UTF-8}
+      - CUSTOM_USER=${CUSTOM_USER:-admin}
+      - PASSWORD=${PASSWORD:-password}
     volumes:
       - chrome_config:/config
     restart: unless-stopped
     networks:
       - proxy
-
+      
 volumes:
   chrome_config:
+    name: chrome_config
 
 networks:
   proxy:
