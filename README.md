@@ -24,7 +24,7 @@ TZ=Europe/Madrid       # Zona horaria
 DOMAIN_HOST=chrome.tudominio.com  # Dominio para Traefik
 CUSTOM_USER=usuario    # Usuario opcional para acceso
 PASSWORD=contraseña_segura  # Contraseña opcional para acceso
-LC_ALL=es_ES.UTF-8     # Idioma español de España
+LANG=es_ES.UTF-8       # Idioma español de España
 ```
 
 ## Despliegue con Portainer
