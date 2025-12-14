@@ -35,8 +35,10 @@ LANG=es_ES.UTF-8       # Idioma español de España
 2. Nombra el stack: `chrome`
 3. URL del repo: `https://github.com/groales/chrome` (o `https://git.ictiberia.com/groales/chrome`)
 4. Compose path: `docker-compose.yml`
-5. Añade variables de entorno desde `.env`
-6. **Deploy**
+5. **Solo para Traefik**: En **Additional paths**, añade:
+   - `docker-compose.override.traefik.yml.example`
+6. Añade variables de entorno desde `.env`
+7. **Deploy**
 
 ### Opción B: Web Editor
 
