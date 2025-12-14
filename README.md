@@ -22,6 +22,9 @@ Configura estas variables en un archivo `.env`:
 ```env
 TZ=Europe/Madrid       # Zona horaria
 DOMAIN_HOST=tudominio.com  # Dominio para Traefik
+CUSTOM_USER=usuario    # Usuario opcional para acceso
+PASSWORD=contraseña_segura  # Contraseña opcional para acceso
+LANG=es_ES.UTF-8       # Idioma español de España
 ```
 
 ## Despliegue con Portainer
