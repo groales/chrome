@@ -27,6 +27,7 @@ DOMAIN_HOST=chrome.tudominio.com  # Dominio para Traefik
 CUSTOM_USER=admin      # Usuario para acceso (por defecto: admin)
 PASSWORD=password      # Contraseña para acceso (por defecto: password)
 LC_ALL=es_ES.UTF-8     # Idioma español de España
+CHROME_CLI=https://www.google.es  # Página inicial de Chrome (por defecto: https://www.linuxserver.io)
 ```
 
 **Nota**: El contenedor tiene `shm_size: 1gb` configurado para memoria compartida, mejorando la estabilidad de Chrome.

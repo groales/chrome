@@ -9,9 +9,10 @@ services:
       - LC_ALL=${LC_ALL:-es_ES.UTF-8}
       - CUSTOM_USER=${CUSTOM_USER:-admin}
       - PASSWORD=${PASSWORD:-password}
+      - CHROME_CLI=${CHROME_CLI:-https://www.linuxserver.io}
     volumes:
       - chrome_config:/config
-    #Puertos expuestos para acceso directo (opcional, se recomienda usar Traefik)  
+    #Puertos expuestos para acceso directo (opcional, se recomienda usar proxy inverso)  
     #ports:
     #  - 3000:3000
     #  - 3001:3001
