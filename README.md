@@ -6,7 +6,9 @@ Contenedor Docker con Google Chrome basado en LinuxServer. Proporciona una inter
 
 - 🌐 **Interfaz Web**: Acceso a Chrome vía navegador en puerto 3000
 - 🔒 **Aislado**: Chrome ejecutándose en contenedor seguro
-- ⚙️ **Configurable**: Variables de entorno para TZ y dominio
+- ⚙️ **Configurable**: Variables de entorno para TZ, dominio, usuario y contraseña
+- 🗣️ **Idioma Español**: Configurado con locale es_ES.UTF-8
+- 💾 **Memoria Compartida**: shm_size de 1GB para estabilidad
 
 ## Requisitos Previos
 
@@ -22,10 +24,12 @@ Configura estas variables en un archivo `.env`:
 ```env
 TZ=Europe/Madrid       # Zona horaria
 DOMAIN_HOST=chrome.tudominio.com  # Dominio para Traefik
-CUSTOM_USER=usuario    # Usuario para acceso (por defecto: admin)
-PASSWORD=contraseña_segura  # Contraseña para acceso (por defecto: password)
+CUSTOM_USER=admin      # Usuario para acceso (por defecto: admin)
+PASSWORD=password      # Contraseña para acceso (por defecto: password)
 LC_ALL=es_ES.UTF-8     # Idioma español de España
 ```
+
+**Nota**: El contenedor tiene `shm_size: 1gb` configurado para memoria compartida, mejorando la estabilidad de Chrome.
 
 ## Despliegue con Portainer
 
@@ -48,6 +52,8 @@ LC_ALL=es_ES.UTF-8     # Idioma español de España
 4. **Deploy**
 
 ## Configuración con Proxy Inverso
+
+**Nota**: Los puertos 3000 y 3001 están comentados en `docker-compose.yml` por defecto. Se recomienda usar un proxy inverso (Traefik o NPM) para acceso seguro. Si necesitas acceso directo, descomenta las líneas de `ports`.
 
 ### Traefik
 
