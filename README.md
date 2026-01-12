@@ -13,44 +13,140 @@ Contenedor Docker con Google Chrome basado en LinuxServer. Proporciona una inter
 ## Requisitos Previos
 
 - Docker Engine instalado
-- Portainer configurado (recomendado)
-- **Para Traefik**: Red Docker `proxy` creada
+- Docker Compose instalado
+- **Para Traefik o NPM**: Red Docker `proxy` creada
 - **Dominio configurado**: Para acceso HTTPS
 
-## Variables de Entorno
+## Archivos de este Repositorio
 
-Configura estas variables en un archivo `.env`:
+Este repositorio contiene archivos de ejemplo:
+- `docker-compose.yml` - Configuración base del contenedor
+- `.env.example` - Plantilla de variables de entorno
+- `docker-compose.override.traefik.yml.example` - Labels para Traefik
+- `README.md` - Esta documentación
 
-```env
-TZ=Europe/Madrid       # Zona horaria
-DOMAIN_HOST=chrome.tudominio.com  # Dominio para Traefik
-CUSTOM_USER=admin      # Usuario para acceso (por defecto: admin)
-PASSWORD=password      # Contraseña para acceso (por defecto: password)
-LC_ALL=es_ES.UTF-8     # Idioma español de España
-CHROME_CLI=https://www.google.es  # Página inicial de Chrome (por defecto: https://www.linuxserver.io)
+> 💡 **Tip**: Puedes copiar estos archivos manualmente o clonar el repositorio.
+
+---
+
+## Despliegue con Docker Compose
+
+### 1. Crear Directorio y Archivos
+
+```bash
+# Crear directorio
+mkdir chrome
+cd chrome
 ```
 
-**Nota**: El contenedor tiene `shm_size: 1gb` configurado para memoria compartida, mejorando la estabilidad de Chrome.
+### 2. Crear docker-compose.yml
 
-## Despliegue con Portainer
+Crea el archivo `docker-compose.yml`:
 
-### Opción A: Git Repository (Recomendada)
+```yaml
+services:
+  chrome:
+    image: lscr.io/linuxserver/chrome:latest
+    container_name: chrome
+    restart: unless-stopped
+    #ports:
+    #  - 3000:3000
+    #  - 3001:3001
+    volumes:
+      - chrome_config:/config
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ:-Europe/Madrid}
+      - LC_ALL=${LC_ALL:-es_ES.UTF-8}
+      - CUSTOM_USER=${CUSTOM_USER:-admin}
+      - PASSWORD=${PASSWORD:-password}
+      - CHROME_CLI=${CHROME_CLI:-https://www.linuxserver.io}
+    shm_size: "1gb"
 
-1. En Portainer, ve a **Stacks** → **Add stack**
-2. Nombra el stack: `chrome`
-3. URL del repo: `https://github.com/groales/chrome` (o `https://git.ictiberia.com/groales/chrome`)
-4. Compose path: `docker-compose.yml`
-5. **Solo para Traefik**: En **Additional paths**, añade:
-   - `docker-compose.override.traefik.yml.example`
-6. Añade variables de entorno desde `.env`
-7. **Deploy**
+volumes:
+  chrome_config:
 
-### Opción B: Web Editor
+networks:
+  default:
+    external: true
+    name: proxy
+```
 
-1. Copia el contenido de `docker-compose.yml`
-2. Pega en **Stacks** → **Add stack** → **Web editor**
-3. Añade las variables de entorno
-4. **Deploy**
+### 3. Configurar Variables de Entorno
+
+Crea el archivo `.env`:
+
+```env
+# Zona horaria
+TZ=Europe/Madrid
+
+# Dominio para Traefik
+DOMAIN_HOST=chrome.tudominio.com
+
+# Usuario y contraseña
+CUSTOM_USER=admin
+PASSWORD=tu_contraseña_segura
+
+# Idioma español de España
+LC_ALL=es_ES.UTF-8
+
+# Página inicial de Chrome
+CHROME_CLI=https://www.google.es
+```
+
+### 4. (Opcional) Configurar Traefik
+
+Si usas Traefik, crea `docker-compose.override.yml`:
+
+```yaml
+services:
+  chrome:
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.chrome.rule=Host(`${DOMAIN_HOST}`)
+      - traefik.http.routers.chrome.entrypoints=websecure
+      - traefik.http.routers.chrome.tls.certresolver=letsencrypt
+      - traefik.http.services.chrome.loadbalancer.server.port=3000
+```
+
+### 5. Desplegar
+
+```bash
+# Crear red proxy si no existe
+docker network create proxy
+
+# Iniciar servicios
+docker compose up -d
+
+# Ver logs
+docker compose logs -f chrome
+```
+
+---
+
+## Método Alternativo: Clonar desde Git
+
+Si prefieres usar Git para mantener la configuración actualizada:
+
+```bash
+# Clonar repositorio
+git clone https://git.ictiberia.com/groales/chrome.git
+cd chrome
+
+# Copiar y editar variables
+cp .env.example .env
+nano .env
+
+# Para Traefik
+cp docker-compose.override.traefik.yml.example docker-compose.override.yml
+
+# Desplegar
+docker network create proxy
+docker compose up -d
+```
+
+---
 
 ## Configuración con Proxy Inverso
 
