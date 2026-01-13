@@ -18,13 +18,13 @@ services:
     #  - 3001:3001
     shm_size: "1gb"
     restart: unless-stopped
-    networks:
-      - proxy
       
 volumes:
   chrome_config:
     name: chrome_config
 
+# añadir estas líneas al final del archivo para proxy inverso 
 networks:
-  proxy:
+  default:
     external: true
+    name: proxy
