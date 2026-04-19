@@ -20,7 +20,7 @@ Contenedor Docker con Google Chrome basado en LinuxServer. Proporciona una inter
 ## Archivos de este Repositorio
 
 Este repositorio contiene archivos de ejemplo:
-- `docker-compose.yml` - Configuración base del contenedor
+- `compose.yaml` - Configuración base del contenedor
 - `.env.example` - Plantilla de variables de entorno
 - `docker-compose.override.traefik.yml.example` - Labels para Traefik
 - `README.md` - Esta documentación
@@ -39,9 +39,9 @@ mkdir chrome
 cd chrome
 ```
 
-### 2. Crear docker-compose.yml
+### 2. Crear compose.yaml
 
-Crea el archivo `docker-compose.yml`:
+Crea el archivo `compose.yaml`:
 
 ```yaml
 services:
@@ -99,7 +99,7 @@ CHROME_CLI=https://www.google.es
 
 ### 4. (Opcional) Configurar Traefik
 
-Si usas Traefik, crea `docker-compose.override.yml`:
+Si usas Traefik, crea `compose.override.yaml`:
 
 ```yaml
 services:
@@ -141,7 +141,7 @@ cp .env.example .env
 nano .env
 
 # Para Traefik
-cp docker-compose.override.traefik.yml.example docker-compose.override.yml
+cp docker-compose.override.traefik.yml.example compose.override.yaml
 
 # Desplegar
 docker network create proxy
@@ -152,11 +152,11 @@ docker compose up -d
 
 ## Configuración con Proxy Inverso
 
-**Nota**: Los puertos 3000 y 3001 están comentados en `docker-compose.yml` por defecto. Se recomienda usar un proxy inverso (Traefik o NPM) para acceso seguro. Si necesitas acceso directo, descomenta las líneas de `ports`.
+**Nota**: Los puertos 3000 y 3001 están comentados en `compose.yaml` por defecto. Se recomienda usar un proxy inverso (Traefik o NPM) para acceso seguro. Si necesitas acceso directo, descomenta las líneas de `ports`.
 
 ### Traefik
 
-1. Copia `docker-compose.override.traefik.yml.example` a `docker-compose.override.yml`
+1. Copia `docker-compose.override.traefik.yml.example` a `compose.override.yaml`
 2. Edita `DOMAIN_HOST` en tu `.env` con tu dominio real
 3. Asegúrate de que la red `proxy` existe
 4. Deploy
