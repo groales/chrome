@@ -14,7 +14,6 @@ Contenedor Docker con Google Chrome basado en LinuxServer. Proporciona una inter
 
 - Docker Engine instalado
 - Docker Compose instalado
-- **Para Traefik o NPM**: Red Docker `proxy` creada
 - **Dominio configurado**: Para acceso HTTPS
 
 ## Archivos de este Repositorio
@@ -22,7 +21,6 @@ Contenedor Docker con Google Chrome basado en LinuxServer. Proporciona una inter
 Este repositorio contiene archivos de ejemplo:
 - `compose.yaml` - Configuración base del contenedor
 - `.env.example` - Plantilla de variables de entorno
-- `docker-compose.override.traefik.yml.example` - Labels para Traefik
 - `README.md` - Esta documentación
 
 > 💡 **Tip**: Puedes copiar estos archivos manualmente o clonar el repositorio.
@@ -83,7 +81,6 @@ Crea el archivo `.env`:
 # Zona horaria
 TZ=Europe/Madrid
 
-# Dominio para Traefik
 DOMAIN_HOST=chrome.tudominio.com
 
 # Usuario y contraseña
@@ -97,19 +94,12 @@ LC_ALL=es_ES.UTF-8
 CHROME_CLI=https://www.google.es
 ```
 
-### 4. (Opcional) Configurar Traefik
 
-Si usas Traefik, crea `compose.override.yaml`:
 
 ```yaml
 services:
   chrome:
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.chrome.rule=Host(`${DOMAIN_HOST}`)
-      - traefik.http.routers.chrome.entrypoints=websecure
-      - traefik.http.routers.chrome.tls.certresolver=letsencrypt
-      - traefik.http.services.chrome.loadbalancer.server.port=3000
 ```
 
 ### 5. Desplegar
@@ -140,8 +130,6 @@ cd chrome
 cp .env.example .env
 nano .env
 
-# Para Traefik
-cp docker-compose.override.traefik.yml.example compose.override.yaml
 
 # Desplegar
 docker network create proxy
@@ -152,22 +140,16 @@ docker compose up -d
 
 ## Configuración con Proxy Inverso
 
-**Nota**: Los puertos 3000 y 3001 están comentados en `compose.yaml` por defecto. Se recomienda usar un proxy inverso (Traefik o NPM) para acceso seguro. Si necesitas acceso directo, descomenta las líneas de `ports`.
 
-### Traefik
 
-1. Copia `docker-compose.override.traefik.yml.example` a `compose.override.yaml`
 2. Edita `DOMAIN_HOST` en tu `.env` con tu dominio real
 3. Asegúrate de que la red `proxy` existe
 4. Deploy
 
-### NPM (Nginx Proxy Manager)
 
-No requiere override adicional. Solo configura un Proxy Host en NPM apuntando a `chrome:3000` en la red `proxy`.
 
 ## Acceso
 
-- **Interfaz Web**: `https://${DOMAIN_HOST}` (configurado en Traefik)
 
 ## Volúmenes
 
