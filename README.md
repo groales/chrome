@@ -51,7 +51,7 @@ services:
     #  - 3000:3000
     #  - 3001:3001
     volumes:
-      - chrome_config:/config
+      - ./config:/config
     environment:
       - PUID=1000
       - PGID=1000
@@ -61,10 +61,6 @@ services:
       - PASSWORD=${PASSWORD:-password}
       - CHROME_CLI=${CHROME_CLI:-https://www.linuxserver.io}
     shm_size: "1gb"
-
-volumes:
-  chrome_config:
-    name: chrome_config
 
 # añadir estas líneas al final del archivo para proxy inverso 
 networks:

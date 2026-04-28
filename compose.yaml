@@ -11,17 +11,13 @@ services:
       - PASSWORD=${PASSWORD:-password}
       - CHROME_CLI=${CHROME_CLI:-https://www.linuxserver.io}
     volumes:
-      - chrome_config:/config
+      - ./config:/config
     #Puertos expuestos para acceso directo (opcional, se recomienda usar proxy inverso)  
     #ports:
     #  - 3000:3000
     #  - 3001:3001
     shm_size: "1gb"
     restart: unless-stopped
-      
-volumes:
-  chrome_config:
-    name: chrome_config
 
 # añadir estas líneas al final del archivo para proxy inverso 
 networks:
