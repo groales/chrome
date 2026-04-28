@@ -1,57 +1,52 @@
 # Chrome
 
-Contenedor Docker con Google Chrome basado en LinuxServer. Proporciona una interfaz web para usar Chrome en un navegador headless.
+Contenedor Docker con Google Chrome basado en LinuxServer, accesible por navegador (KasmVNC).
+
+Referencia oficial de instalación: https://docs.linuxserver.io/images/docker-chrome/
 
 ## Características
 
-- 🌐 **Interfaz Web**: Acceso a Chrome vía navegador en puerto 3000
-- 🔒 **Aislado**: Chrome ejecutándose en contenedor seguro
-- ⚙️ **Configurable**: Variables de entorno para TZ, dominio, usuario y contraseña
-- 🗣️ **Idioma Español**: Configurado con locale es_ES.UTF-8
-- 💾 **Memoria Compartida**: shm_size de 1GB para estabilidad
+- Interfaz web para navegador remoto.
+- Configurable por variables de entorno.
+- Persistencia local en `./config`.
+- Soporte de acceso directo opcional por puertos `3000` y `3001`.
 
 ## Requisitos Previos
 
-- Docker Engine instalado
-- Docker Compose instalado
-- **Dominio configurado**: Para acceso HTTPS
+- Docker Engine instalado.
+- Docker Compose instalado.
+- Red Docker externa `proxy` creada si lo publicarás detrás de proxy inverso.
 
 ## Archivos de este Repositorio
 
-Este repositorio contiene archivos de ejemplo:
-- `compose.yaml` - Configuración base del contenedor
-- `.env.example` - Plantilla de variables de entorno
-- `README.md` - Esta documentación
-
-> 💡 **Tip**: Puedes copiar estos archivos manualmente o clonar el repositorio.
+- `compose.yaml` - Definición del servicio Chrome.
+- `.env.example` - Variables de entorno recomendadas.
+- `README.md` - Esta documentación.
 
 ---
 
 ## Despliegue con Docker Compose
 
-### 1. Crear Directorio y Archivos
+### 1. Clonar el repositorio
 
 ```bash
-# Crear directorio
-mkdir chrome
+git clone https://github.com/groales/chrome.git
 cd chrome
 ```
 
-### 2. Crear compose.yaml
+### 2. Preparar variables de entorno
 
-Crea el archivo `compose.yaml`:
+```bash
+cp .env.example .env
+```
+
+### 3. Revisar `compose.yaml`
 
 ```yaml
 services:
   chrome:
     image: lscr.io/linuxserver/chrome:latest
     container_name: chrome
-    restart: unless-stopped
-    #ports:
-    #  - 3000:3000
-    #  - 3001:3001
-    volumes:
-      - ./config:/config
     environment:
       - PUID=1000
       - PGID=1000
@@ -60,98 +55,104 @@ services:
       - CUSTOM_USER=${CUSTOM_USER:-admin}
       - PASSWORD=${PASSWORD:-password}
       - CHROME_CLI=${CHROME_CLI:-https://www.linuxserver.io}
+    volumes:
+      - ./config:/config
+    #Puertos expuestos para acceso directo (opcional, se recomienda usar proxy inverso)
+    #ports:
+    #  - 3000:3000
+    #  - 3001:3001
     shm_size: "1gb"
+    restart: unless-stopped
 
-# añadir estas líneas al final del archivo para proxy inverso 
 networks:
   default:
     external: true
     name: proxy
 ```
 
-### 3. Configurar Variables de Entorno
-
-Crea el archivo `.env`:
-
-```env
-# Zona horaria
-TZ=Europe/Madrid
-
-DOMAIN_HOST=chrome.tudominio.com
-
-# Usuario y contraseña
-CUSTOM_USER=admin
-PASSWORD=tu_contraseña_segura
-
-# Idioma español de España
-LC_ALL=es_ES.UTF-8
-
-# Página inicial de Chrome
-CHROME_CLI=https://www.google.es
-```
-
-
-
-```yaml
-services:
-  chrome:
-    labels:
-```
-
-### 5. Desplegar
+### 4. Levantar el servicio
 
 ```bash
-# Crear red proxy si no existe
 docker network create proxy
-
-# Iniciar servicios
 docker compose up -d
+```
 
-# Ver logs
+---
+
+## Método Alternativo: Crear Manualmente
+
+Puedes copiar `compose.yaml` y `.env.example` manualmente en una carpeta nueva y ejecutar los mismos comandos de despliegue.
+
+---
+
+## Acceso Inicial
+
+- Con proxy inverso: usa tu dominio configurado.
+- Acceso directo opcional: descomenta los puertos y accede a `http://IP_SERVIDOR:3000`.
+
+## Comandos Útiles
+
+```bash
+docker compose logs -f chrome
+docker compose restart chrome
+docker compose pull
+docker compose up -d
+docker compose down
+```
+
+## Estructura de Volúmenes
+
+```text
+Bind mount:
+└── ./config -> /config
+```
+
+## Configuración Avanzada
+
+- `CHROME_CLI` define la URL inicial al abrir Chrome.
+- `LC_ALL` permite forzar idioma/región.
+- `CUSTOM_USER` y `PASSWORD` controlan credenciales de acceso.
+
+## Solución de Problemas
+
+Si no abre por dominio:
+
+- Verifica DNS.
+- Verifica que el proxy enruta al contenedor `chrome`.
+- Revisa logs con `docker compose logs -f chrome`.
+
+## Seguridad
+
+- Usa HTTPS para acceso remoto.
+- Evita exponer puertos directos a Internet.
+- Usa contraseña robusta en `PASSWORD`.
+
+## Backup y Restauración
+
+```bash
+# Backup
+tar -czf chrome-config-$(date +%Y%m%d).tar.gz ./config
+
+# Restauración
+docker compose down
+rm -rf ./config
+tar -xzf chrome-config-YYYYMMDD.tar.gz
+docker compose up -d
+```
+
+## Actualización
+
+```bash
+docker compose pull
+docker compose up -d
 docker compose logs -f chrome
 ```
 
----
+## Recursos
 
-## Método Alternativo: Clonar desde Git
+- LinuxServer Chrome Docs: https://docs.linuxserver.io/images/docker-chrome/
+- Repositorio LinuxServer: https://github.com/linuxserver/docker-chrome
 
-Si prefieres usar Git para mantener la configuración actualizada:
+## Licencia
 
-```bash
-# Clonar repositorio
-git clone https://git.ictiberia.com/groales/chrome.git
-cd chrome
-
-# Copiar y editar variables
-cp .env.example .env
-nano .env
-
-
-# Desplegar
-docker network create proxy
-docker compose up -d
-```
-
----
-
-## Configuración con Proxy Inverso
-
-
-
-2. Edita `DOMAIN_HOST` en tu `.env` con tu dominio real
-3. Asegúrate de que la red `proxy` existe
-4. Deploy
-
-
-
-## Acceso
-
-
-## Volúmenes
-
-- `chrome_config`: Configuración persistente de Chrome
-
-## Recursos Oficiales
-
-- [Documentación LinuxServer Chrome](https://docs.linuxserver.io/images/docker-chrome/)
-- [GitHub LinuxServer](https://github.com/linuxserver/docker-chrome)
+Este repositorio de configuración es de uso libre. Revisa la licencia del proyecto original en su repositorio oficial.
